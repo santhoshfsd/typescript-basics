@@ -1,30 +1,30 @@
 class Department {
-    // name: string;
-    private employees: string[] = [];
-
+    // private readonly id: string;
+    // private name: string;
+    protected employees: string[] = [];
+  
     constructor(private readonly id: string, public name: string) {
-        // this.id = id;
-        // this.name = n;
-      }
-    
-
+      // this.id = id;
+      // this.name = n;
+    }
+  
     describe(this: Department) {
-        console.log(`Department (${this.id}): ${this.name}`);
+      console.log(`Department (${this.id}): ${this.name}`);
     }
-
+  
     addEmployee(employee: string) {
-        // validation etc
-        this.employees.push(employee);
+      // validation etc
+      // this.id = 'd2';
+      this.employees.push(employee);
     }
-
+  
     printEmployeeInformation() {
-        console.log(this.employees.length);
-        console.log(this.employees);
+      console.log(this.employees.length);
+      console.log(this.employees);
     }
-}
-
-
-class ITDepartment extends Department {
+  }
+  
+  class ITDepartment extends Department {
     admins: string[];
     constructor(id: string, admins: string[]) {
       super(id, 'IT');
@@ -35,6 +35,13 @@ class ITDepartment extends Department {
   class AccountingDepartment extends Department {
     constructor(id: string, private reports: string[]) {
       super(id, 'Accounting');
+    }
+  
+    addEmployee(name: string) {
+      if (name === 'Max') {
+        return;
+      }
+      this.employees.push(name);
     }
   
     addReport(text: string) {
@@ -63,9 +70,12 @@ class ITDepartment extends Department {
   
   accounting.addReport('Something went wrong...');
   
+  accounting.addEmployee('Max');
+  accounting.addEmployee('Manu');
+  
   accounting.printReports();
-
-
-// const accountingCopy = { name: 'DUMMY', describe: accounting.describe };
-// accountingCopy.describe();
-
+  accounting.printEmployeeInformation();
+  
+  // const accountingCopy = { name: 'DUMMY', describe: accounting.describe };
+  
+  // accountingCopy.describe();
