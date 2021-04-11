@@ -2,7 +2,7 @@ class Department {
     // name: string;
     private employees: string[] = [];
 
-    constructor(private id: string, public name: string) {
+    constructor(private readonly id: string, public name: string) {
         // this.id = id;
         // this.name = n;
       }
@@ -23,18 +23,49 @@ class Department {
     }
 }
 
-const accounting = new Department('d1', 'Accounting');
 
-
-accounting.describe();
-accounting.addEmployee('Max');
-accounting.addEmployee('Manu');
-
-accounting.describe();
-accounting.name = 'NEW NAME';
-accounting.printEmployeeInformation();
+class ITDepartment extends Department {
+    admins: string[];
+    constructor(id: string, admins: string[]) {
+      super(id, 'IT');
+      this.admins = admins;
+    }
+  }
+  
+  class AccountingDepartment extends Department {
+    constructor(id: string, private reports: string[]) {
+      super(id, 'Accounting');
+    }
+  
+    addReport(text: string) {
+      this.reports.push(text);
+    }
+  
+    printReports() {
+      console.log(this.reports);
+    }
+  }
+  
+  const it = new ITDepartment('d1', ['Max']);
+  
+  it.addEmployee('Max');
+  it.addEmployee('Manu');
+  
+  // it.employees[2] = 'Anna';
+  
+  it.describe();
+  it.name = 'NEW NAME';
+  it.printEmployeeInformation();
+  
+  console.log(it);
+  
+  const accounting = new AccountingDepartment('d2', []);
+  
+  accounting.addReport('Something went wrong...');
+  
+  accounting.printReports();
 
 
 // const accountingCopy = { name: 'DUMMY', describe: accounting.describe };
-
 // accountingCopy.describe();
+
