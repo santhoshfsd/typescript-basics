@@ -1,5 +1,16 @@
-interface Greetable {
-    name: string;
+
+// type addFunction = (one : number, two : number) => number
+
+// anonymous function - as a function type
+interface addFunction {
+    (a:number, b:number) :number
+}
+interface Named {
+    readonly name: string;
+  
+}
+
+interface Greetable extends Named{
     greet(phrase : string):void;
 }
 
