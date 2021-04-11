@@ -18,7 +18,7 @@ interface Greetable extends Named{
 class Person implements Greetable {
     name: string;
     greet(phrase: string): void {
-        throw new Error("Method not implemented.");
+        throw new Error("Method not implemented."+phrase);
     }
     age:number
     constructor(name :string,age:number) {
@@ -29,7 +29,7 @@ class Person implements Greetable {
 let user: Person = {
     name:"santhso",
     greet(phrase: string) {
-        console.log("phrase");
+        console.log(phrase);
         
     },
     age:10
