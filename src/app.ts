@@ -328,4 +328,4 @@ class ProjectInput extends Component<HTMLDivElement, HTMLElement>{;
 
 const project = new ProjectInput();
 const active = new ProjectList('active')
-const finish = new ProjectList('finished')
+// const finish = new ProjectList('finished')
