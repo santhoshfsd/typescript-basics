@@ -1,4 +1,19 @@
-// Code goes here!
+
+//decorator
+function autoBind(_:any, _2:string, descriptor:PropertyDescriptor) {
+    const originalMethod = descriptor.value;
+    const adjDescriptor: PropertyDescriptor = {
+        configurable:true,
+        get(){
+            const bound = originalMethod.bind(this);
+            return bound
+        }
+    }
+    return adjDescriptor
+}
+
+
+// Project input
 class ProjectInput {
     
     templateElement: HTMLTemplateElement;
@@ -28,6 +43,7 @@ class ProjectInput {
         this.hostElement.insertAdjacentElement('afterbegin', this.element);
     }
 
+    @autoBind
     private submitHandler(event:Event) {
         event.preventDefault();
         console.log(this.titleElement.value);
