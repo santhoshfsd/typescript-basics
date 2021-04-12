@@ -33,7 +33,7 @@ class ProjectInput {
         
         this.titleElement = this.element.querySelector('#title') as HTMLInputElement;
         this.descriptionElement = this.element.querySelector('#description') as HTMLInputElement;
-        this.ownerElement = this.element.querySelector('#title') as HTMLInputElement;
+        this.ownerElement = this.element.querySelector('#people') as HTMLInputElement;
         this.configure();
         this.attach();
     }
@@ -43,10 +43,30 @@ class ProjectInput {
         this.hostElement.insertAdjacentElement('afterbegin', this.element);
     }
 
+    private getUserData():[string, string,number] | void {
+        const title = this.titleElement.value;
+        const description = this.descriptionElement.value;
+        const owner = this.ownerElement.value;
+        
+        if(title.trim().length === 0  || description.trim().length === 0 || owner.trim().length === 0) {
+            alert("Invalid Input");
+            return;
+        }
+        return [title,description,+owner]
+    }
+
+
     @autoBind
     private submitHandler(event:Event) {
         event.preventDefault();
-        console.log(this.titleElement.value);
+        const userInput = this.getUserData();
+        if(Array.isArray(userInput)) {
+            const [title, description, owner] =userInput
+            console.log(title);
+            console.log(description);
+            console.log(owner);
+            
+        }
         
     }
 
