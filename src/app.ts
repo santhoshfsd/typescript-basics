@@ -94,24 +94,41 @@ function autoBind(_: any, _2: string, descriptor: PropertyDescriptor) {
     return adjDescriptor
 }
 
-// Project List Class
+// Base Component
 
 
-class ProjectList {
-
+abstract class Component<T extends HTMLElement ,U extends HTMLElement> {
     templateElement: HTMLTemplateElement;
-    hostElement: HTMLDivElement;
-    element: HTMLElement;
-    assignedProject: Project [];
-
-    constructor(private type: 'active' | 'finished') {
-        this.templateElement = document.getElementById('project-list')! as HTMLTemplateElement
-        this.hostElement = document.getElementById('app')! as HTMLDivElement
+    hostElement: T; 
+    element: U;
+    constructor(templateId :string, hostElementId: string,insertAtStart:boolean, newElementId?: string) {
+        this.templateElement = document.getElementById(templateId)! as HTMLTemplateElement
+        this.hostElement = document.getElementById(hostElementId)! as T
 
         //DocumentFragment type
         const importedNode = document.importNode(this.templateElement.content, true);
-        this.element = importedNode.firstElementChild! as HTMLElement;
-        this.element.id = `${this.type}-projects`;
+        this.element = importedNode.firstElementChild! as U;
+        if(newElementId){
+            this.element.id = newElementId;
+        }
+        this.attach(insertAtStart);
+    }
+    private attach(insertAtStart:boolean) {
+        // afterbegin afterend  /before
+        this.hostElement.insertAdjacentElement(insertAtStart?'afterbegin':'beforeend', this.element);
+    }
+
+    abstract configure: void;
+    abstract renderContent: void;
+}
+
+// Project List Class
+class ProjectList  extends Component<HTMLDivElement, HTMLElement>{
+
+    assignedProject: Project [];
+
+    constructor(private type: 'active' | 'finished') {
+        super('project-list','app',false,`${type}-projects`,);
         this.assignedProject = [];
         projectState.addListeners((projects: Project[]) => {
             const relevantProj =projects.filter(prj => {
@@ -124,13 +141,13 @@ class ProjectList {
             this.assignedProject = relevantProj
             this.renderProject()
         });
-        this.attach();
+        this.configure();
         this.renderContent();
     }
 
     private renderProject() {
         const listEL = document.getElementById(`${this.type}-projects-list`)! as HTMLUListElement;
-        listEL.innerHTML = ''
+        lis tEL.innerHTML = ''
         for (const proj of this.assignedProject) {
             const listItem = document.createElement('li');
             listItem.textContent = proj.title;
@@ -138,16 +155,13 @@ class ProjectList {
         }
     }
 
-    private renderContent() {
+    renderContent():void {
         const listId = `${this.type}-projects-list`;
         this.element.querySelector('ul')!.id = listId;
         this.element.querySelector('h2')!.textContent = this.type.toUpperCase() + ' Projects';
     }
 
-    private attach() {
-        // afterbegin afterend  /before
-        this.hostElement.insertAdjacentElement('beforeend', this.element);
-    }
+
 }
 
 // Project input
