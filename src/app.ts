@@ -10,20 +10,24 @@ class Project {
     }
 }
 
-type Listener = (items: Project[]) => void 
+class State<T> {
+    
+    protected listeners: Listener<T>[] = [];
+
+    addListeners(listerFn: Listener<T>) {
+        this.listeners.push(listerFn)
+    }
+}
+
+type Listener<T> = (items: T[]) => void 
 
 // State 
-class ProjectState {
-    private listeners: Listener[] = []
-    private projects: Project[] = []
+class ProjectState extends State<Project>{
+     private projects: Project[] = []
     private static instance: ProjectState;
 
     private constructor() {
-    }
-
-
-    addListeners(listerFn: Listener) {
-        this.listeners.push(listerFn)
+        super();
     }
 
     static getInstance() {
@@ -118,8 +122,8 @@ abstract class Component<T extends HTMLElement ,U extends HTMLElement> {
         this.hostElement.insertAdjacentElement(insertAtStart?'afterbegin':'beforeend', this.element);
     }
 
-    abstract configure: void;
-    abstract renderContent: void;
+    abstract configure(): void;
+    abstract renderContent(): void;
 }
 
 // Project List Class
@@ -130,6 +134,11 @@ class ProjectList  extends Component<HTMLDivElement, HTMLElement>{
     constructor(private type: 'active' | 'finished') {
         super('project-list','app',false,`${type}-projects`,);
         this.assignedProject = [];
+        this.configure();
+        this.renderContent();
+    }
+
+    configure() {
         projectState.addListeners((projects: Project[]) => {
             const relevantProj =projects.filter(prj => {
                 if(this.type ==='active') {
@@ -141,13 +150,11 @@ class ProjectList  extends Component<HTMLDivElement, HTMLElement>{
             this.assignedProject = relevantProj
             this.renderProject()
         });
-        this.configure();
-        this.renderContent();
-    }
+      }
 
     private renderProject() {
         const listEL = document.getElementById(`${this.type}-projects-list`)! as HTMLUListElement;
-        lis tEL.innerHTML = ''
+        listEL.innerHTML = ''
         for (const proj of this.assignedProject) {
             const listItem = document.createElement('li');
             listItem.textContent = proj.title;
@@ -165,35 +172,27 @@ class ProjectList  extends Component<HTMLDivElement, HTMLElement>{
 }
 
 // Project input
-class ProjectInput {
-
-    templateElement: HTMLTemplateElement;
-    hostElement: HTMLDivElement;
-    element: HTMLFormElement;
+class ProjectInput extends Component<HTMLDivElement, HTMLElement>{;
     titleElement: HTMLInputElement;
     descriptionElement: HTMLInputElement
     peopleElement: HTMLInputElement
+    
     constructor() {
-        this.templateElement = document.getElementById('project-input')! as HTMLTemplateElement
-        this.hostElement = document.getElementById('app')! as HTMLDivElement
-
-        //DocumentFragment type
-        const importedNode = document.importNode(this.templateElement.content, true);
-        this.element = importedNode.firstElementChild! as HTMLFormElement;
-        this.element.id = "user-input";
-
+        super('project-input','app',true,'user-input')
+  
         this.titleElement = this.element.querySelector('#title') as HTMLInputElement;
         this.descriptionElement = this.element.querySelector('#description') as HTMLInputElement;
         this.peopleElement = this.element.querySelector('#people') as HTMLInputElement;
         this.configure();
-        this.attach();
     }
 
-    private attach() {
-        // afterbegin afterend  /before
-        this.hostElement.insertAdjacentElement('afterbegin', this.element);
+    configure() {
+        this.element.addEventListener('submit', this.submitHandler.bind(this))
     }
 
+    renderContent() {
+
+    }
     private getUserData(): [string, string, number] | void {
         const title = this.titleElement.value;
         const description = this.descriptionElement.value;
@@ -233,10 +232,6 @@ class ProjectInput {
 
         }
 
-    }
-
-    private configure() {
-        this.element.addEventListener('submit', this.submitHandler.bind(this))
     }
 }
 
