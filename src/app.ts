@@ -54,9 +54,7 @@ class ProjectState extends State<Project>{
     public addProject(title: string, description: string, noOfPeople: number) {
         const newProject = new Project(Math.random().toString(), title, description, noOfPeople, ProjectStatus.Active)
         this.projects.push(newProject)
-        for (const listerFn of this.listeners) {
-            listerFn(this.projects.slice());
-        }
+        this.updateListeners();
     }
 
     moveProject(projectId: string, newStatus: ProjectStatus) {
@@ -232,7 +230,7 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement>  implements Dra
   configure() {
     this.element.addEventListener('dragover', this.dragOverHandler);
     this.element.addEventListener('dragleave', this.dragLeaveHandler);
-    this.element.addEventListener('drag', this.dropHandler);
+    this.element.addEventListener('drop', this.dropHandler);
     projectState.addListeners((projects: Project[]) => {
       const relevantProjects = projects.filter(prj => {
         if (this.type === 'active') {
