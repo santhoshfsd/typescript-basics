@@ -165,7 +165,7 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement>  implements
     }
     configure(): void {
         this.element.addEventListener('dragstart', this.dragStartHandler);
-        this.element.addEventListener('dragstart', this.dragStartHandler);
+        this.element.addEventListener('dragend', this.dragEndHandler);
     }
 
     constructor(hostId: string, project : Project){
@@ -232,7 +232,7 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement>  implements Dra
   configure() {
     this.element.addEventListener('dragover', this.dragOverHandler);
     this.element.addEventListener('dragleave', this.dragLeaveHandler);
-    this.element.addEventListener('drag', this.dragOverHandler);
+    this.element.addEventListener('drag', this.dropHandler);
     projectState.addListeners((projects: Project[]) => {
       const relevantProjects = projects.filter(prj => {
         if (this.type === 'active') {
